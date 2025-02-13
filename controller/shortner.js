@@ -13,6 +13,7 @@ const isValidUrl = (url) => {
 exports.shortenUrl = async (req, res) => {
     try {
         const { longUrl, customAlias, topic } = req.body;
+        const userID = req.headers.userID;
 
         //  Validate input URL
         if (!longUrl || !isValidUrl(longUrl)) {
@@ -32,6 +33,7 @@ exports.shortenUrl = async (req, res) => {
 
         // Save to database
         const newShortUrl = new ShortUrl({
+            createdBy: userID,
             longUrl,
             shortUrl,
             customAlias: customAlias || null,

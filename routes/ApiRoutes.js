@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
 });
 
 
-router.post("/shorten", urlShortenLimiter, shortnerController.shortenUrl);
+router.post("/shorten",AuthMiddleware.authenticateRequest,urlShortenLimiter, shortnerController.shortenUrl);
 router.get("/analytics/overall",AuthMiddleware.authenticateRequest,shortnerController.OverAllAnalytics);
 router.get("/shorten/:alias", shortnerController.RedirectToUrl);
 router.get("/analytics/:alias", shortnerController.Analytics);
