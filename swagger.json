@@ -1,0 +1,192 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "URL Shortener API",
+      "description": "API for shortening URLs and tracking analytics using Redis caching.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Local Development Server"
+      }
+    ],
+    "compnents":{
+        "securitySchemes":{
+            "BearerAuth":{
+                "type":"http",
+                "schema":"Bearer",
+                "Format":"JWT"
+            }
+        }
+    },
+    "paths": {
+      "/auth/google": {
+        "get": {
+            "tags":["Auth"],
+          "summary": "Get google auth link",
+          "description": "Get goole authentication url to login with google account",
+          "requestBody": {
+            "required": false,
+            "content": {
+              "application/json": {
+                
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Goole Authentication URL",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "login_url":"https://accounts.google.com/o/oauth2/auth?client_id=1020673342351-np850ppoccd2mtqoctmlbjjp7s4kgnfi.apps.googleusercontent.com&redirect_uri=http://localhost:3000/auth/google/callback&response_type=code&scope=profile email",
+                    "message":"Open this Url in your browser"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/auth/google/callback": {
+        "get": {
+            "tags":["Auth"],
+          "summary": "Authentication Callback",
+          "description": "Get goole authentication Callback",
+          "requestBody": {
+            "required": false,
+            "content": {
+              "application/json": {
+                
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Goole Authentication Callback",
+              "content": {
+                "application/json": {
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/short/{shortCode}": {
+        "get": {
+            "tags":["Short URL"],
+          "summary": "Redirect to long URL",
+          "description": "Redirects to the original long URL using the short code.",
+          "parameters": [
+            {
+              "name": "shortCode",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "example": "abc123"
+            }
+          ],
+          "responses": {
+            "302": {
+              "description": "Redirects to the original URL"
+            },
+            "404": {
+              "description": "Short URL not found"
+            }
+          }
+        }
+      },
+      "/api/analytics/{shortUrlId}": {
+        "get": {
+          "summary": "Get URL Analytics",
+          "description": "Retrieves analytics for a given short URL, including click counts and device details.",
+          "parameters": [
+            {
+              "name": "shortUrlId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "example": "65f123abc987654"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Analytics data retrieved successfully",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "totalClicks": 123,
+                    "uniqueUsers": 56,
+                    "deviceType": [
+                      {
+                        "deviceName": "mobile",
+                        "uniqueClicks": 40
+                      },
+                      {
+                        "deviceName": "desktop",
+                        "uniqueClicks": 83
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "No analytics found for the URL"
+            }
+          }
+        }
+      },
+      "/api/overall-analytics": {
+        "get": {
+          "summary": "Get Overall Analytics",
+          "description": "Retrieves analytics for all URLs created by the user.",
+          "parameters": [
+            {
+              "name": "Authorization",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string"
+              },
+              "example": "Bearer your-jwt-token"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Overall analytics retrieved successfully",
+              "content": {
+                "application/json": {
+                  "example": {
+                    "totalUrls": 10,
+                    "totalClicks": 500,
+                    "uniqueUsers": 200,
+                    "clicksByDate": ["2024-01-01T12:00:00Z", "2024-01-02T13:00:00Z"],
+                    "osType": [
+                      {
+                        "osName": "Windows",
+                        "uniqueClicks": 150
+                      },
+                      {
+                        "osName": "MacOS",
+                        "uniqueClicks": 50
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized - JWT required"
+            }
+          }
+        }
+      }
+    }
+  }
+  
