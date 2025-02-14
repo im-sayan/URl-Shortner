@@ -64,7 +64,12 @@ exports.RedirectToUrl = async (req, res) => {
 
         const cachedRedictURL = await redisClient.get(`RedirctUrl:${alias}`);
         if (cachedRedictURL) {
+            if (acceptHeader.includes("text/html")) {
+            return res.redirect(cachedRedictURL);
+        } else {
+            
             return res.status(200).json({message: "Redirect URL found (Cached)", redirectUrl: JSON.parse(cachedRedictURL) });
+        }
         }
 
     
