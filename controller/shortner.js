@@ -63,8 +63,9 @@ exports.RedirectToUrl = async (req, res) => {
         const { alias } = req.params;
 
         const cachedRedictURL = await redisClient.get(`RedirctUrl:${alias}`);
+        const Header = req.headers.accept || "";
         if (cachedRedictURL) {
-            if (acceptHeader.includes("text/html")) {
+            if (Header.includes("text/html")) {
             return res.redirect(cachedRedictURL);
         } else {
             
