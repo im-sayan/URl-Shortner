@@ -10,18 +10,22 @@ module.exports.authenticateRequest = async (req, res, next) => {
         }
 
         const accessToken = req.headers.authorization.split(' ')[1];
+        console.log(accessToken,"accessToken");
+        
 
         // Verify token synchronously
         const decodedToken = await promisify(jwt.verify)(accessToken, TokenConfig.jwtAccessToken.secret);
 
         // Find user by ID and validate token
-        const user = await User.findOne({ _id: decodedToken.user_id});
+        const user = await User.findOne({ email: decodedToken.email});
+        console.log(user,"user");
+        
 
         if (!user) {
             return res.status(401).json({ msg: "Authentication Failed" });
         }
 
-        req.headers.userID = decodedToken.user_id;
+        req.headers.userID = user._id;
         next();
         
     } catch (error) {

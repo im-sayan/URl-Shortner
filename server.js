@@ -63,7 +63,8 @@ app.use((err, req, res, next) => {
 const port = normalizePort(process.env.PORT || "3000");
 const server = app.listen(port, () => {
     console.log(`Server running on port ${port}`),
-    console.log(`📄 Swagger API Docs available at http://localhost:${port}/api-docs`);
+    console.log(`📄 Locally Swagger API Docs     at http://localhost:${port}/api-docs`);
+    console.log(`📄 Production Swagger API Docs  at ${`https://url-shortner-nooa.onrender.com`}/api-docs`);
 });
 
 function normalizePort(val) {
